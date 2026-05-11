@@ -25,6 +25,7 @@ import Admin from './pages/Admin';
 import AdminSettings from './pages/AdminSettings';
 import 'aos/dist/aos.css';
 import AOS from 'aos';
+import LiveChat from './components/LiveChat/LiveChat';
 
 
 
@@ -64,40 +65,43 @@ const App = () => {
     });
   }, []);
   return (
-  <ThemeProvider defaultTheme="light">
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={wrap(<Index />)} />
-          <Route path="/about" element={wrap(<AboutPage />)} />
-          <Route path="/contact" element={wrap(<ContactPage />)} />
-          <Route path="/transfers" element={wrap(<TransfersPage />)} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/transfer" element={<ProtectedRoute><Transfer /></ProtectedRoute>} />
-          <Route path="/cards" element={<ProtectedRoute><Cards /></ProtectedRoute>} />
-          <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
-          <Route path="/admin/users" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
-          <Route path="/admin/transactions" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
-          <Route path="/admin/settings" element={<ProtectedRoute adminOnly><AdminSettings /></ProtectedRoute>} />
+    <>
+      <LiveChat />
+      <ThemeProvider defaultTheme="light">
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={wrap(<Index />)} />
+              <Route path="/about" element={wrap(<AboutPage />)} />
+              <Route path="/contact" element={wrap(<ContactPage />)} />
+              <Route path="/transfers" element={wrap(<TransfersPage />)} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/transfer" element={<ProtectedRoute><Transfer /></ProtectedRoute>} />
+              <Route path="/cards" element={<ProtectedRoute><Cards /></ProtectedRoute>} />
+              <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
+              <Route path="/admin/users" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
+              <Route path="/admin/transactions" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
+              <Route path="/admin/settings" element={<ProtectedRoute adminOnly><AdminSettings /></ProtectedRoute>} />
 
-          {standardRoutes.map((path) => (
-            <Route key={path} path={`/${path}`} element={wrap(<StandardPage />)} />
-          ))}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-  </ThemeProvider>
+              {standardRoutes.map((path) => (
+                <Route key={path} path={`/${path}`} element={wrap(<StandardPage />)} />
+              ))}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+      </ThemeProvider>
+  </>
   );
 };
 
