@@ -70,7 +70,7 @@ const submit = async () => {
       country: form.country,
       account_type: form.accountType,
       account_number: accountNumber,
-      bank_name: "TrustBank",
+      bank_name: "TrustBankPlc",
       balance: 0,
       pin: form.pin,
       role: "user",
