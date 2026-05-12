@@ -196,13 +196,13 @@ const PAGES: Record<string, PageDef> = {
   // Footer / Extra pages
   'careers': { eyebrow: 'Company · Careers', title: <>Build the bank <span className="text-gradient">we always wished existed.</span></>, subtitle: 'Join engineers, designers, bankers and operators rebuilding global financial infrastructure with care.', Icon: Users, features: baseFeatures('finance') },
   'press': { eyebrow: 'Company · Press', title: <>Press & <span className="text-gradient">media inquiries.</span></>, subtitle: 'Our latest news, official statements, brand assets and a direct line to our communications team.', Icon: Newspaper, features: baseFeatures('finance') },
-  'blog': { eyebrow: 'Company · Blog', title: <>Notes from <span className="text-gradient">the inside.</span></>, subtitle: 'Engineering, design and finance writing from the people building Aurelis day to day.', Icon: BookOpen, features: baseFeatures('finance') },
+  'blog': { eyebrow: 'Company · Blog', title: <>Notes from <span className="text-gradient">the inside.</span></>, subtitle: 'Engineering, design and finance writing from the people building TrustBank day to day.', Icon: BookOpen, features: baseFeatures('finance') },
   'transfers': { eyebrow: 'Move Money · Transfers', title: <>Transfers, <span className="text-gradient">at the speed of intent.</span></>, subtitle: 'Domestic, international, person-to-person, RTP and wire — all in one beautifully unified flow.', Icon: Zap, features: baseFeatures('finance') },
   'privacy': { eyebrow: 'Trust · Privacy', title: <>Privacy <span className="text-gradient">by design.</span></>, subtitle: 'How we collect, use and protect your information — written in plain English, not legal hieroglyphs.', Icon: Lock, features: baseFeatures('tech') },
-  'terms': { eyebrow: 'Trust · Terms of Service', title: <>Terms of <span className="text-gradient">service.</span></>, subtitle: 'The rules of the road for using Aurelis products — fair, transparent and reviewed regularly.', Icon: ScrollText, features: baseFeatures('tech') },
+  'terms': { eyebrow: 'Trust · Terms of Service', title: <>Terms of <span className="text-gradient">service.</span></>, subtitle: 'The rules of the road for using TrustBank products — fair, transparent and reviewed regularly.', Icon: ScrollText, features: baseFeatures('tech') },
   'security': { eyebrow: 'Trust · Security', title: <>Security <span className="text-gradient">that\'s never an afterthought.</span></>, subtitle: 'How we keep your money and your data safe — and what you can do to help us help you.', Icon: ShieldCheck, features: baseFeatures('tech') },
   'cookies': { eyebrow: 'Trust · Cookies', title: <>Cookies <span className="text-gradient">policy.</span></>, subtitle: 'How we use cookies and similar technologies, what you can control, and how to opt out.', Icon: FileCheck, features: baseFeatures('tech') },
-  'about': { eyebrow: 'Company · About', title: <>About <span className="text-gradient">Aurelis.</span></>, subtitle: 'Founded in 1998 with a simple idea: banking should serve people, not the other way around. Today we serve clients in 84 countries.', Icon: Sparkles, features: baseFeatures('finance'), bullets: ['Founded 1998', '84 countries served', '$420B+ assets managed', '12.4M active clients', 'AAA credit rating', 'B Corporation certified'] },
+  'about': { eyebrow: 'Company · About', title: <>About <span className="text-gradient">TrustBank.</span></>, subtitle: 'Founded in 1998 with a simple idea: banking should serve people, not the other way around. Today we serve clients in 84 countries.', Icon: Sparkles, features: baseFeatures('finance'), bullets: ['Founded 1998', '84 countries served', '$420B+ assets managed', '12.4M active clients', 'AAA credit rating', 'B Corporation certified'] },
   'security-center': { eyebrow: 'Trust · Security Center', title: <>The Security <span className="text-gradient">Center.</span></>, subtitle: 'Tools, education and reporting to keep your accounts safe — including breach alerts, password help and travel notices.', Icon: ShieldCheck, features: baseFeatures('tech') },
   'fraud-protection': { eyebrow: 'Trust · Fraud Protection', title: <>Fraud protection <span className="text-gradient">that watches while you sleep.</span></>, subtitle: 'AI-driven monitoring, $0 liability guarantees and a 24/7 fraud team across three continents.', Icon: Eye, features: baseFeatures('tech') },
   'mobile-banking': { eyebrow: 'Mobile · Mobile Banking', title: <>Mobile banking, <span className="text-gradient">in your hand.</span></>, subtitle: 'Move money, manage cards, deposit checks and read AI insights — all from a single, beautifully crafted app.', Icon: Smartphone, features: baseFeatures('tech') },
@@ -214,9 +214,9 @@ const PAGES: Record<string, PageDef> = {
 };
 
 const DEFAULT: PageDef = {
-  eyebrow: 'Aurelis',
+  eyebrow: 'TrustBank',
   title: <>A premium banking <span className="text-gradient">experience.</span></>,
-  subtitle: 'Explore this section to learn more about what Aurelis can do for you.',
+  subtitle: 'Explore this section to learn more about what TrustBank can do for you.',
   Icon: Network,
   features: baseFeatures('finance'),
 };

@@ -211,7 +211,7 @@ export const InsightsSection: React.FC = () => {
 
 export const Testimonials: React.FC = () => {
   const items = [
-    { name: 'Amelia Hartwell', role: 'CFO, Northbridge Industries', quote: 'Aurelis gave us treasury infrastructure we used to think only the largest banks could deliver. The difference is night and day.', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop' },
+    { name: 'Amelia Hartwell', role: 'CFO, Northbridge Industries', quote: 'TrustBank gave us treasury infrastructure we used to think only the largest banks could deliver. The difference is night and day.', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop' },
     { name: 'Jonathan Reyes', role: 'Founder, Lumen AI', quote: 'They funded our seed round, opened our payroll on day one, and our private banker still answers within an hour. Unmatched.', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop' },
     { name: 'Priya Krishnan', role: 'Family Office Principal', quote: 'Their estate planning team coordinated five jurisdictions seamlessly. It changed how our family thinks about long-term wealth.', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop' },
   ];

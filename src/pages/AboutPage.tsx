@@ -11,7 +11,7 @@ const leaders = [
 ];
 
 const timeline = [
-  { y: '1998', t: 'Founded', d: 'Aurelis opens its doors in New York with a single conviction: clients deserve better.' },
+  { y: '1998', t: 'Founded', d: 'TrustBank opens its doors in New York with a single conviction: clients deserve better.' },
   { y: '2006', t: 'Wealth Division', d: 'Private banking and wealth management launches, serving 1,200 founding families.' },
   { y: '2014', t: 'Global Expansion', d: 'Offices open in London, Singapore and Zurich — the start of our global franchise.' },
   { y: '2020', t: 'Digital First', d: 'Re-platformed mobile and web from the ground up, setting a new standard for fintech UX.' },
@@ -32,7 +32,7 @@ const AboutPage: React.FC = () => (
       <div className="absolute inset-0 grid-bg opacity-40"></div>
       <div className="absolute top-20 -right-40 w-[500px] h-[500px] rounded-full bg-[#0b24f3]/20 blur-[120px]"></div>
       <div className="relative max-w-[1100px] mx-auto px-6 lg:px-8 text-center">
-        <div className="text-xs uppercase tracking-[0.2em] text-[#9aa6ff] mb-3">About Aurelis</div>
+        <div className="text-xs uppercase tracking-[0.2em] text-[#9aa6ff] mb-3">About TrustBank</div>
         <h1 className="text-4xl lg:text-7xl font-semibold text-white leading-[1.05]">
           Banking should serve <span className="text-gradient">people, not the other way around.</span>
         </h1>

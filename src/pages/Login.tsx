@@ -105,7 +105,7 @@ useEffect(() => {
             </div>
 
             <div className="text-[10px] uppercase tracking-[0.2em] text-white/50">
-              America First Credit Union
+              Private Bank
             </div>
           </div>
         </Link>
