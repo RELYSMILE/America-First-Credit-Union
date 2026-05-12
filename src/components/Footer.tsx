@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Diamond, Twitter, Linkedin, Facebook, Instagram, Youtube, ArrowRight, ShieldCheck, Globe } from 'lucide-react';
+import { Twitter, Linkedin, Facebook, Instagram, Youtube, ArrowRight, ShieldCheck, Globe } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const cols = [
   {
@@ -118,7 +119,11 @@ const Footer: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <Diamond className="w-5 h-5 text-white" />
+                  <img
+                    src={logo}
+                    alt="logo"
+                    className="w-full h-full object-cover"
+                  />
                 )}
               </div>
 

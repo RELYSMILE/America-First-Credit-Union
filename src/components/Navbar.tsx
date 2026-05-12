@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Bell, Search, Menu, X, ChevronDown, Diamond, ArrowRight } from 'lucide-react';
+import { Bell, Search, Menu, X, ChevronDown, ArrowRight } from 'lucide-react';
 import { personalItems, businessItems, commercialItems, wealthItems, NavItem } from '@/data/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import logo from '../assets/logo.png';
 
 const menus: { key: string; label: string; items: NavItem[]; featured: { title: string; text: string; cta: string; to: string } }[] = [
   { key: 'personal', label: 'Personal', items: personalItems, featured: { title: 'Premium Checking', text: 'Zero fees, global ATM access, and instant transfers.', cta: 'Open in 3 minutes', to: '/personal/checking' } },
@@ -41,7 +42,11 @@ const Navbar: React.FC = () => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <Diamond className="w-5 h-5 text-white" strokeWidth={2.5} />
+            <img
+              src={logo}
+              alt="logo"
+              className="w-full h-full object-cover"
+            />
           )}
         </div>
 

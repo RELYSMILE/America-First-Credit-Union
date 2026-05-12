@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/lib/Config';
-import { Shield, Eye, EyeOff, Loader2, ArrowLeft, Diamond } from 'lucide-react';
+import { Shield, Eye, EyeOff, Loader2, ArrowLeft, } from 'lucide-react';
+import logo from '../assets/logo.png';
 import { toast } from 'sonner';
 
 const Login: React.FC = () => {
@@ -95,7 +96,11 @@ useEffect(() => {
                 }}
               />
             ) : (
-              <Diamond className="w-5 h-5 text-white" strokeWidth={2.5} />
+              <img
+                    src={logo}
+                    alt="logo"
+                    className="w-full h-full object-cover"
+                  />
             )}
           </div>
 
