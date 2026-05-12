@@ -101,7 +101,7 @@ useEffect(() => {
 
           <div className="leading-tight">
             <div className="font-semibold tracking-tight text-white">
-              {settings?.app_name ?? 'AFCU'}
+              {settings?.app_name ?? 'TrustBankPlc'}
             </div>
 
             <div className="text-[10px] uppercase tracking-[0.2em] text-white/50">

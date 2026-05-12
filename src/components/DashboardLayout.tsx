@@ -15,7 +15,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   
   
-    const appName  = settings?.app_name || 'AFCU';
+    const appName  = settings?.app_name || 'TrustBankPlc';
     const cleanName = appName.replace(/\s+/g, '');
     const first = cleanName.slice(0, 4);   // NEST
     const second = cleanName.slice(4);     // BANK
