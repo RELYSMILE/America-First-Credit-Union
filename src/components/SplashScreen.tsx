@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const SplashScreen: React.FC = () => {
   const { settings } = useAuth();
 
-  const appName = settings?.app_name || 'American First Credit Union';
+  const appName = settings?.app_name || 'Trust Bank';
   const tagline = 'Secure Digital Banking';
 
   return (

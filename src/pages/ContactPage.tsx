@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Clock, ArrowRight, Building2, Briefcase, Crown, Headphones, MessagesSquare, Globe2 } from 'lucide-react';
 
 const offices = [
-  { city: 'New York', addr: '420 Park Avenue, Floor 38', phone: '+1 (212) 555-0182', tag: 'Global HQ' },
-  { city: 'London', addr: '14 Cornhill, Bishopsgate', phone: '+44 20 7946 0234', tag: 'EMEA HQ' },
-  { city: 'Singapore', addr: '50 Raffles Place, Level 30', phone: '+65 6812 4400', tag: 'APAC HQ' },
-  { city: 'Zurich', addr: 'Bahnhofstrasse 24', phone: '+41 44 215 30 00', tag: 'Wealth' },
+  { city: 'New York', addr: '420 Park Avenue, Floor 38', tag: 'Global HQ' },
+  { city: 'London', addr: '14 Cornhill, Bishopsgate', tag: 'EMEA HQ' },
+  { city: 'Singapore', addr: '50 Raffles Place, Level 30', tag: 'APAC HQ' },
+  { city: 'Zurich', addr: 'Bahnhofstrasse 24', tag: 'Wealth' },
 ];
 
 const categories = [
@@ -104,8 +104,8 @@ const ContactPage: React.FC = () => {
           </div>
           <div className="lg:col-span-2 space-y-4">
             <div className="glass rounded-2xl p-6 border border-white/10">
-              <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">24/7 Client Service</div><div className="text-white/60 text-sm">+1 (800) 555-AURE</div></div></div>
-              <div className="flex items-start gap-3 mt-5"><Mail className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">Email</div><div className="text-white/60 text-sm">hello@aurelis.bank</div></div></div>
+              <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">24/7 Client Service</div><div className="text-white/60 text-sm"></div></div></div>
+              <div className="flex items-start gap-3 mt-5"><Mail className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">Email</div><div className="text-white/60 text-sm">support@trustplc.online</div></div></div>
               <div className="flex items-start gap-3 mt-5"><Clock className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">Hours</div><div className="text-white/60 text-sm">Always — every day, every timezone</div></div></div>
             </div>
             {offices.map((o) => (
@@ -115,7 +115,7 @@ const ContactPage: React.FC = () => {
                   <span className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-md bg-[#0b24f3]/15 border border-[#0b24f3]/30 text-[#9aa6ff]">{o.tag}</span>
                 </div>
                 <div className="flex items-start gap-2 mt-3 text-sm text-white/65"><MapPin className="w-4 h-4 mt-0.5 text-[#9aa6ff]" /><span>{o.addr}</span></div>
-                <div className="flex items-center gap-2 mt-2 text-sm text-white/65"><Phone className="w-4 h-4 text-[#9aa6ff]" /><span>{o.phone}</span></div>
+                {/* <div className="flex items-center gap-2 mt-2 text-sm text-white/65"><Phone className="w-4 h-4 text-[#9aa6ff]" /><span>{o.phone}</span></div> */}
               </div>
             ))}
           </div>
