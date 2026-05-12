@@ -15,7 +15,7 @@ import { db } from '@/lib/Config';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Users, DollarSign, Activity, Search, Edit2, Ban, CheckCircle2, Loader2, Snowflake, Trash2   } from 'lucide-react';
 import { toast } from 'sonner';
-import defaultAvatar from '@/assets/defaultAvatar.jpeg';
+import defaultAvatar from '@/assets/avatar.png';
 
 const Admin: React.FC = () => {
   const { user } = useAuth();

@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import DashboardLayout from '@/components/DashboardLayout';
 import { User, Mail, Phone, Globe, CreditCard, Calendar, Shield } from 'lucide-react';
 import { countries } from '@/lib/countries';
-import defaultAvatar from '../assets/defaultAvatar.jpeg';
+import defaultAvatar from '../assets/avatar.png';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();

@@ -5,7 +5,7 @@ import { useTheme } from "@/components/theme-provider";
 import { Shield, LayoutDashboard, Send, History, User, LogOut, Moon, Sun, Settings, Users, Menu, X, CreditCard } from 'lucide-react';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/Config';
-import defaultAvatar from '../assets/defaultAvatar.jpeg';
+import defaultAvatar from '../assets/avatar.png';
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, signOut, settings } = useAuth();
