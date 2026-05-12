@@ -17,9 +17,7 @@ const Profile: React.FC = () => {
     { icon: Globe, label: 'Country', value: country ? `${country.flag} ${country.name}` : user.country || '—' },
     { icon: CreditCard, label: 'Account Number', value: user.account_number },
     { icon: Shield, label: 'Bank', value: user.bank_name },
-    { icon: Calendar, label: 'Member Since', value: user.created_at?.toDate
-  ? user.created_at.toDate().toLocaleDateString()
-  : new Date(user.created_at).toLocaleDateString() },
+    { icon: Calendar, label: 'Member Since', value: '05/16/2010' }
   ];
 
   return (
