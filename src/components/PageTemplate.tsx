@@ -50,7 +50,7 @@ const PageTemplate: React.FC<Props> = ({ eyebrow, title, subtitle, Icon, feature
                 {
                   ctaPrimary?.label ??
                   (path === 'login-page'
-                    ? 'Login'
+                    ? 'Login here'
                     : path === 'signup'
                     ? 'Create Account'
                     : 'Create Account')

@@ -42,13 +42,31 @@ const Hero: React.FC = () => {
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link to="/open-account" className="btn-primary text-base">
-              Open Account <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link to="/personal/checking" className="btn-ghost text-base">
-              <Compass className="w-4 h-4" /> Explore Services
-            </Link>
-          </div>
+  {/* Login Button - Different Color */}
+  <Link
+    to="/login-page"
+    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl
+               bg-white text-[#0b24f3] border border-[#0b24f3]/20
+               hover:bg-[#0b24f3] hover:text-white
+               shadow-md hover:shadow-lg
+               font-semibold transition-all duration-300"
+  >
+    Login
+    <ArrowRight className="w-4 h-4" />
+  </Link>
+
+  {/* Open Account Button */}
+  <Link to="/open-account" className="btn-primary text-base">
+    Open Account
+    <ArrowRight className="w-4 h-4" />
+  </Link>
+
+  {/* Explore Services Button */}
+  <Link to="/personal/checking" className="btn-ghost text-base">
+    <Compass className="w-4 h-4" />
+    Explore Services
+  </Link>
+</div>
 
           <div className="mt-12 grid grid-cols-3 max-w-xl gap-6">
             {[
