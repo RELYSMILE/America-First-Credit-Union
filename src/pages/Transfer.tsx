@@ -17,7 +17,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Search, ArrowRight, Loader2, Check, AlertCircle, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
-type Step = 'account' | 'charges' | 'amount' | 'confirm' | 'pin' | 'success';
+type Step = 'account' | 'cot' | 'tax' | 'imf' | 'charges' | 'amount' | 'confirm' | 'pin' | 'success';
 
 const Transfer: React.FC = () => {
   const { user, refresh } = useAuth();
@@ -201,9 +201,9 @@ const submit = async () => {
 
         {/* Stepper */}
         <div className="flex items-center gap-2 mb-8">
-          {['account', 'charges', 'amount', 'confirm', 'success'].map((s, i) => {
-            const idx = ['account', 'charges', 'amount', 'confirm', 'success'].indexOf(step);
-            const mine = ['account', 'charges', 'amount', 'confirm', 'success'].indexOf(s);
+          {['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].map((s, i) => {
+            const idx = ['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].indexOf(step);
+            const mine = ['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].indexOf(s);
             return <div key={s} className={`flex-1 h-1.5 rounded-full ${mine <= idx ? 'bg-[#0b24f3]' : 'bg-slate-200 dark:bg-slate-800'}`} />;
           })}
         </div>
@@ -267,7 +267,7 @@ const submit = async () => {
           </div>
         )}
         <button
-            onClick={() => setStep('charges')}
+            onClick={() => setStep('cot')}
               disabled={(!found && !bankName)|| searching || user.frozen}
               className="w-full mt-6 py-3.5 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30 disabled:opacity-50 flex items-center justify-center gap-2"
             >
@@ -276,65 +276,135 @@ const submit = async () => {
             </div>
           )}
 
-          {step === 'charges' && recipient && (
+          {step === 'cot' && recipient && (
   <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-    
     <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">
-      Security Verification
+      Enter COT Code
     </h2>
     <p className="text-sm text-slate-500 mb-6">
-      Enter required transfer codes to proceed
+      Cost of Transfer verification code
     </p>
 
-    <div className="space-y-4">
-      
-      <input
-        value={cot}
-        onChange={(e) => setCot(e.target.value.replace(/\D/g, '').slice(0, 4))}
-        placeholder="Enter COT code"
-        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-      />
-
-      <input
-        value={tax}
-        onChange={(e) => setTax(e.target.value.replace(/\D/g, '').slice(0, 4))}
-        placeholder="Enter TAX code"
-        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-      />
-
-      <input
-        value={imf}
-        onChange={(e) => setImf(e.target.value.replace(/\D/g, '').slice(0, 4))}
-        placeholder="Enter IMF code"
-        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
-      />
-
-    </div>
+    <input
+      value={cot}
+      onChange={(e) =>
+        setCot(e.target.value.replace(/\D/g, '').slice(0, 4))
+      }
+      placeholder="Enter COT code"
+      className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white"
+    />
 
     <div className="flex gap-3 mt-6">
       <button
         onClick={() => setStep('account')}
-        className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400"
+        className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white"
       >
         Back
       </button>
 
       <button
         onClick={() => {
-          if (cot !== '3411') return toast.error('Invalid COT code');
-          if (tax !== '4533') return toast.error('Invalid TAX code');
-          if (imf !== '4087') return toast.error('Invalid IMF code');
-
-          setStep('amount');
+          if (cot !== '3411') {
+            toast.error('Invalid COT code please contact support for assistance');
+            return;
+          }
+          setStep('tax');
         }}
-        className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30"
+        className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold"
       >
         Continue
       </button>
     </div>
-
   </div>
 )}
+
+
+{step === 'tax' && recipient && (
+  <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+    <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">
+      Enter TAX Code
+    </h2>
+    <p className="text-sm text-slate-500 mb-6">
+      Tax clearance verification code
+    </p>
+
+    <input
+      value={tax}
+      onChange={(e) =>
+        setTax(e.target.value.replace(/\D/g, '').slice(0, 4))
+      }
+      placeholder="Enter TAX code"
+      className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white"
+    />
+
+    <div className="flex gap-3 mt-6">
+      <button
+        onClick={() => setStep('cot')}
+        className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white"
+      >
+        Back
+      </button>
+
+      <button
+        onClick={() => {
+          if (tax !== '4533') {
+            toast.error('Invalid TAX code please contact support for assistance');
+            return;
+          }
+          setStep('imf');
+        }}
+        className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold"
+      >
+        Continue
+      </button>
+    </div>
+  </div>
+)}
+
+
+{step === 'imf' && recipient && (
+  <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+    <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">
+      Enter IMF Code
+    </h2>
+    <p className="text-sm text-slate-500 mb-6">
+      International Monetary Fund verification code
+    </p>
+
+    <input
+      value={imf}
+      onChange={(e) =>
+        setImf(e.target.value.replace(/\D/g, '').slice(0, 4))
+      }
+      placeholder="Enter IMF code"
+      className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white"
+    />
+
+    <div className="flex gap-3 mt-6">
+      <button
+        onClick={() => setStep('tax')}
+        className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white"
+      >
+        Back
+      </button>
+
+      <button
+        onClick={() => {
+          if (imf !== '4087') {
+            toast.error('Invalid IMF code please contact support for assistance');
+            return;
+          }
+          setStep('amount');
+        }}
+        className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold"
+      >
+        Continue
+      </button>
+    </div>
+  </div>
+)}
+
+
 
           {step === 'amount' && recipient && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">

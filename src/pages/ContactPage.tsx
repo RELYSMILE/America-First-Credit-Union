@@ -105,7 +105,7 @@ const ContactPage: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             <div className="glass rounded-2xl p-6 border border-white/10">
               <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">24/7 Client Service</div><div className="text-white/60 text-sm"></div></div></div>
-              <div className="flex items-start gap-3 mt-5"><Mail className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">Email</div><div className="text-white/60 text-sm">support@trustplc.online</div></div></div>
+              <div className="flex items-start gap-3 mt-5"><Mail className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">Email</div><div className="text-white/60 text-sm">support.trustbankplc@gmail.com</div></div></div>
               <div className="flex items-start gap-3 mt-5"><Clock className="w-5 h-5 text-[#9aa6ff]" /><div><div className="text-sm text-white">Hours</div><div className="text-white/60 text-sm">Always — every day, every timezone</div></div></div>
             </div>
             {offices.map((o) => (

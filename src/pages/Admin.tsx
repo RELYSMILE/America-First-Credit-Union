@@ -99,31 +99,38 @@ useEffect(() => {
     return;
   }
 
-    if (!imageFile) {
-    alert("Please select an image");
-    return;
-  }
-
   setSaving(true);
 
   try {
-    const imageUrl = await uploadImageToCloudinary(imageFile);
     const userRef = doc(db, 'nest_users', editing.uid);
 
-    await updateDoc(userRef, {
+    // Prepare update object
+    const updateData: any = {
       balance: bal,
       role: newRole,
       account_number: newAccountNumber,
-      avatar: imageUrl,
-    });
+    };
+
+    // Only upload and update avatar if a new image was selected
+    if (imageFile) {
+      const imageUrl = await uploadImageToCloudinary(imageFile);
+      updateData.avatar = imageUrl;
+    }
+
+    // Update only the provided fields
+    await updateDoc(userRef, updateData);
 
     toast.success('User updated successfully');
-    setEditing(null);
-  } catch {
-    toast.error('Failed to update user');
-  }
 
-  setSaving(false);
+    // Reset states
+    setEditing(null);
+    setImageFile(null);
+  } catch (error) {
+    console.error('UPDATE ERROR:', error);
+    toast.error('Failed to update user');
+  } finally {
+    setSaving(false);
+  }
 };
 
 const toggleBlock = async (u: any) => {
@@ -407,101 +414,118 @@ const formatDate = (d: any) => {
     onClick={() => setSelectedTx(null)}
   >
     <div
-      onClick={(e) => e.stopPropagation()}
-      className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
-    >
-      {/* HEADER */}
-      <div className="bg-gradient-to-r from-[tomato] to-orange-500 p-5 text-white">
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-xs uppercase tracking-widest opacity-80">
-              Transaction
-            </p>
-            <h2 className="text-lg font-bold">Receipt Details</h2>
-          </div>
-
-          <button
-            onClick={() => setSelectedTx(null)}
-            className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition"
-          >
-            ✕
-          </button>
-        </div>
+  onClick={(e) => e.stopPropagation()}
+  className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
+>
+  {/* HEADER */}
+  <div className="bg-gradient-to-r from-[tomato] to-orange-500 p-5 text-white">
+    <div className="flex justify-between items-center">
+      <div>
+        <p className="text-xs uppercase tracking-widest text-white/80">
+          Transaction
+        </p>
+        <h2 className="text-lg font-bold text-white">
+          Receipt Details
+        </h2>
       </div>
 
-      {/* BODY */}
-      <div className="p-5 space-y-4">
-        
-        {/* STATUS + AMOUNT */}
-        <div className="flex items-center justify-between">
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold ${
-              selectedTx.status === "success"
-                ? "bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400"
-                : "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30"
-            }`}
-          >
-            {selectedTx.status}
-          </span>
-
-          <p className="text-xl font-black text-slate-900 dark:text-white">
-            ${Number(selectedTx.amount).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-            })}
-          </p>
-        </div>
-
-        {/* DETAILS */}
-        <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/40 p-4 space-y-3 text-sm">
-
-          <div className="flex justify-between">
-            <span className="text-slate-500">Sender</span>
-            <span className="font-semibold">{selectedTx.sender_name}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="text-slate-500">Sender Account</span>
-            <span className="font-mono">{selectedTx.sender_account}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="text-slate-500">Receiver</span>
-            <span className="font-semibold">{selectedTx.receiver_name}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="text-slate-500">Receiver Account</span>
-            <span className="font-mono">{selectedTx.receiver_account}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span className="text-slate-500">Date</span>
-            <span>
-              {selectedTx.created_at?.toDate
-                ? selectedTx.created_at.toDate().toLocaleString()
-                : new Date(selectedTx.created_at).toLocaleString()}
-            </span>
-          </div>
-
-          {selectedTx.note && (
-            <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-              <span className="text-slate-500 text-xs">Note</span>
-              <p className="mt-1">{selectedTx.note}</p>
-            </div>
-          )}
-        </div>
-
-        {/* TX ID */}
-        <div className="text-center">
-          <p className="text-[10px] uppercase tracking-widest text-slate-400">
-            Transaction ID
-          </p>
-          <p className="text-xs font-mono break-all">
-            {selectedTx.id}
-          </p>
-        </div>
-      </div>
+      <button
+        onClick={() => setSelectedTx(null)}
+        className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition text-white"
+      >
+        ✕
+      </button>
     </div>
+  </div>
+
+  {/* BODY */}
+  <div className="p-5 space-y-4 text-slate-700 dark:text-slate-300">
+    
+    {/* STATUS + AMOUNT */}
+    <div className="flex items-center justify-between">
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+          selectedTx.status === "success"
+            ? "bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400"
+            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400"
+        }`}
+      >
+        {selectedTx.status}
+      </span>
+
+      <p className="text-xl font-black text-slate-900 dark:text-white">
+        ${Number(selectedTx.amount).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+        })}
+      </p>
+    </div>
+
+    {/* DETAILS */}
+    <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 p-4 space-y-3 text-sm">
+      <div className="flex justify-between gap-4">
+        <span className="text-slate-500 dark:text-slate-400">Sender</span>
+        <span className="font-semibold text-slate-900 dark:text-white text-right">
+          {selectedTx.sender_name}
+        </span>
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <span className="text-slate-500 dark:text-slate-400">
+          Sender Account
+        </span>
+        <span className="font-mono text-slate-900 dark:text-white text-right">
+          {selectedTx.sender_account}
+        </span>
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <span className="text-slate-500 dark:text-slate-400">Receiver</span>
+        <span className="font-semibold text-slate-900 dark:text-white text-right">
+          {selectedTx.receiver_name}
+        </span>
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <span className="text-slate-500 dark:text-slate-400">
+          Receiver Account
+        </span>
+        <span className="font-mono text-slate-900 dark:text-white text-right">
+          {selectedTx.receiver_account}
+        </span>
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <span className="text-slate-500 dark:text-slate-400">Date</span>
+        <span className="text-slate-900 dark:text-white text-right">
+          {selectedTx.created_at?.toDate
+            ? selectedTx.created_at.toDate().toLocaleString()
+            : new Date(selectedTx.created_at).toLocaleString()}
+        </span>
+      </div>
+
+      {selectedTx.note && (
+        <div className="pt-3 border-t border-slate-200 dark:border-slate-700">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
+            Note
+          </span>
+          <p className="mt-1 text-slate-900 dark:text-white">
+            {selectedTx.note}
+          </p>
+        </div>
+      )}
+    </div>
+
+    {/* TX ID */}
+    <div className="text-center pt-2">
+      <p className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500">
+        Transaction ID
+      </p>
+      <p className="text-xs font-mono break-all text-slate-700 dark:text-slate-300 mt-1">
+        {selectedTx.id}
+      </p>
+    </div>
+  </div>
+</div>
   </div>
 )}
     </DashboardLayout>
