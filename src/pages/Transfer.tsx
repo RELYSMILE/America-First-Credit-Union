@@ -39,7 +39,7 @@ const Transfer: React.FC = () => {
 
 useEffect(() => {
   const delay = setTimeout(() => {
-    if (accountNum.length === 10) {
+    if (accountNum) {
       handleAccountChange(accountNum);
     }
   }, 500);
@@ -47,13 +47,13 @@ useEffect(() => {
   return () => clearTimeout(delay);
 }, [accountNum]);
 const handleAccountChange = async (value: string) => {
-  const cleaned = value.replace(/\D/g, '').slice(0, 10);
+  const cleaned = value.replace(/\D/g, '');
   setAccountNum(cleaned);
 
   setRecipient(null);
   setFound(null);
 
-  if (cleaned.length !== 10) return;
+  if (!cleaned) return;
 
   if (cleaned === user?.account_number) {
     toast.error("You cannot send to yourself");
@@ -239,9 +239,9 @@ const submit = async () => {
                 />
               </div>
               )}
-              {searching && (
+              {/* {searching && (
               <p className="text-sm text-slate-500 mt-3">Searching account...</p>
-            )}
+            )} */}
 
         {found && (
           <div className="mt-4 p-4 rounded-xl bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 flex items-center gap-3">
@@ -260,12 +260,12 @@ const submit = async () => {
           </div>
         )}
 
-        {accountNum.length === 10 && !found && !searching && (
+        {/* {accountNum.length === 10 && !found && !searching && (
           <div className="mt-3 flex items-center gap-2 text-red-500 text-sm">
             <AlertCircle className="w-4 h-4" />
             Account not found
           </div>
-        )}
+        )} */}
         <button
             onClick={() => setStep('cot')}
               disabled={(!found && !bankName)|| searching || user.frozen}
