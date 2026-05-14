@@ -31,6 +31,7 @@ const Transfer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [searching, setSearching] = useState(false);
+  const [found, setFound] = useState<any>(null);
   const [cot, setCot] = useState('');
   const [tax, setTax] = useState('');
   const [imf, setImf] = useState('');
@@ -60,6 +61,7 @@ const handleAccountChange = async (value: string) => {
   setAccountNum(cleaned);
 
   setRecipient(null);
+  setFound(null);
 
   if (!cleaned) return;
 
@@ -79,15 +81,17 @@ const handleAccountChange = async (value: string) => {
     const snap = await getDocs(q);
 
     if (snap.empty) {
+      setFound(null);
       setRecipient(null);
       return;
     }
 
     const data = snap.docs[0].data();
+    setFound(data);
     setRecipient(data);
 
   } catch (e) {
-    console.log('error fetching recipient', e);
+    setFound(null);
   } finally {
     setSearching(false);
   }
@@ -170,7 +174,7 @@ const submit = async () => {
 
         receiver_bank: isExternal
           ? externalBank
-          : (receiverData.bank_name),
+          : receiverData.bank_name,
 
         amount: amountNum,
         note: note || "",
@@ -264,40 +268,38 @@ const submit = async () => {
             className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none font-mono text-lg tracking-widest text-slate-900 dark:text-white placeholder:text-slate-400"
           />
         </div>
-{/* 
+
         {found && (
-          <>
-            <div className="mt-4">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                Bank Name
-              </label>
-
-              <input
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-                placeholder="Enter bank name"
-                className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none"
-              />
-            </div>
-
             <div className="mt-4 p-4 rounded-xl bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0b24f3] to-[#0b24f3] flex items-center justify-center text-white font-bold">
-                {found.name?.charAt(0)}
-              </div>
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-[#0b24f3] to-[#0b24f3] flex items-center justify-center text-white font-bold">
+  {found?.avatar ? (
+    <img
+      src={found.avatar}
+      alt={found.name}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    (found?.name
+      ?.split(' ')
+      .slice(0, 2)
+      .map((n: string) => n[0])
+      .join('')
+      .toUpperCase())
+  )}
+</div>
 
               <div className="flex-1">
                 <p className="font-bold text-slate-900 dark:text-white">
                   {found.name}
                 </p>
                 <p className="text-xs text-slate-500">
-                  Transfer • {found.account_number}
+                  Transfer •  {found.account_number}
                 </p>
               </div>
 
               <Check className="w-5 h-5 text-green-600" />
             </div>
-          </>
-        )} */}
+        )}
       </>
     )}
 
@@ -363,7 +365,7 @@ const submit = async () => {
       disabled={
         isExternal
           ? !accountNum || !externalName || !externalBank
-          : searching || user.frozen
+          : !found || searching || user.frozen
       }
       className="w-full mt-6 py-3.5 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30 disabled:opacity-50 flex items-center justify-center gap-2"
     >
@@ -596,14 +598,7 @@ const submit = async () => {
 )}
 
     <div className="flex gap-3 mt-6">
-      <button
-        onClick={() => setStep('amount')}
-        className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400"
-      >
-        Back
-      </button>
-
-      <button
+<button
   onClick={() => {
     const validOtps = ['0356', '9642', '5580', '2312', '9158'];
 
@@ -664,6 +659,7 @@ const submit = async () => {
                 <Row label="To" value={recipient.name} />
                 <Row label="Account" value={recipient.account_number} />
                 <Row label="Account Type" value={recipient?.account_type} />
+                <Row label="Bank Name" value={recipient?.bank_name} />
                 <Row label="COT" value={cot} />
                 <Row label="TAX" value={tax} />
                 <Row label="IMF" value={imf} />
