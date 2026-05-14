@@ -31,8 +31,6 @@ const Transfer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [searching, setSearching] = useState(false);
-  const [bankName, setBankName] = useState('');
-  const [found, setFound] = useState<any>(null);
   const [cot, setCot] = useState('');
   const [tax, setTax] = useState('');
   const [imf, setImf] = useState('');
@@ -46,6 +44,7 @@ const Transfer: React.FC = () => {
   const [transferError, setTransferError] = useState("");
   const [otp, setOtp] = useState('');
   const [otpError, setOtpError] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
 
 useEffect(() => {
   const delay = setTimeout(() => {
@@ -61,7 +60,6 @@ const handleAccountChange = async (value: string) => {
   setAccountNum(cleaned);
 
   setRecipient(null);
-  setFound(null);
 
   if (!cleaned) return;
 
@@ -81,17 +79,15 @@ const handleAccountChange = async (value: string) => {
     const snap = await getDocs(q);
 
     if (snap.empty) {
-      setFound(null);
       setRecipient(null);
       return;
     }
 
     const data = snap.docs[0].data();
-    setFound(data);
     setRecipient(data);
 
   } catch (e) {
-    setFound(null);
+    console.log('error fetching recipient', e);
   } finally {
     setSearching(false);
   }
@@ -174,7 +170,7 @@ const submit = async () => {
 
         receiver_bank: isExternal
           ? externalBank
-          : (bankName || receiverData.bank_name),
+          : (receiverData.bank_name),
 
         amount: amountNum,
         note: note || "",
@@ -268,7 +264,7 @@ const submit = async () => {
             className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none font-mono text-lg tracking-widest text-slate-900 dark:text-white placeholder:text-slate-400"
           />
         </div>
-
+{/* 
         {found && (
           <>
             <div className="mt-4">
@@ -301,7 +297,7 @@ const submit = async () => {
               <Check className="w-5 h-5 text-green-600" />
             </div>
           </>
-        )}
+        )} */}
       </>
     )}
 
@@ -367,7 +363,7 @@ const submit = async () => {
       disabled={
         isExternal
           ? !accountNum || !externalName || !externalBank
-          : (!found && !bankName) || searching || user.frozen
+          : searching || user.frozen
       }
       className="w-full mt-6 py-3.5 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30 disabled:opacity-50 flex items-center justify-center gap-2"
     >
@@ -608,23 +604,52 @@ const submit = async () => {
       </button>
 
       <button
-        onClick={() => {
-          const validOtps = ['0356', '9642', '5580', '2312', '9158'];
+  onClick={() => {
+    const validOtps = ['0356', '9642', '5580', '2312', '9158'];
 
-          if (!validOtps.includes(otp)) {
-            setOtpError(
-              'Invalid OTP. Please try again or contact customer support.'
-            );
-            return;
-          }
+    setOtpLoading(true);
 
-          setStep('confirm');
-        }}
-        className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold"
-      >
-        Continue
-      </button>
+    setTimeout(() => {
+      setOtpLoading(false);
+
+      if (!validOtps.includes(otp)) {
+        setOtpError(
+          'Verification failed. The OTP is invalid or expired. Please retry or contact customer support.'
+        );
+        return;
+      }
+
+      setStep('confirm');
+    }, 2000); // 2 seconds delay (premium feel)
+  }}
+  disabled={otpLoading}
+  className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+>
+  {otpLoading ? (
+    <>
+      <Loader2 className="w-4 h-4 animate-spin" />
+      Verifying...
+    </>
+  ) : (
+    "Continue"
+  )}
+</button>
     </div>
+    {otpLoading && (
+  <div className="mt-4 p-4 rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/30 flex items-center gap-3 animate-in fade-in">
+    
+    <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+
+    <div>
+      <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+        Verifying Transaction
+      </p>
+      <p className="text-xs text-blue-600 dark:text-blue-400">
+        Please wait while we confirm your security code...
+      </p>
+    </div>
+  </div>
+)}
   </div>
 )}
 
@@ -639,7 +664,6 @@ const submit = async () => {
                 <Row label="To" value={recipient.name} />
                 <Row label="Account" value={recipient.account_number} />
                 <Row label="Account Type" value={recipient?.account_type} />
-                <Row label="Bank Name" value={bankName || recipient?.bank_name} />
                 <Row label="COT" value={cot} />
                 <Row label="TAX" value={tax} />
                 <Row label="IMF" value={imf} />
