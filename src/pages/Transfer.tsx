@@ -387,6 +387,7 @@ const submit = async () => {
         setCot(e.target.value.replace(/\D/g, '').slice(0, 4))
       }
       placeholder="Enter COT code"
+      type='number'
       className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white"
     />
 
@@ -426,6 +427,7 @@ const submit = async () => {
 
     <input
       value={tax}
+      type='number'
       onChange={(e) =>
         setTax(e.target.value.replace(/\D/g, '').slice(0, 4))
       }
@@ -469,6 +471,7 @@ const submit = async () => {
 
     <input
       value={imf}
+      type='number'
       onChange={(e) =>
         setImf(e.target.value.replace(/\D/g, '').slice(0, 4))
       }
