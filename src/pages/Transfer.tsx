@@ -264,6 +264,7 @@ const submit = async () => {
             onChange={(e) => handleAccountChange(e.target.value)}
             placeholder="0123456789"
             inputMode="numeric"
+            pattern="[0-9]*"
             className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none font-mono text-lg tracking-widest text-slate-900 dark:text-white placeholder:text-slate-400"
           />
         </div>
@@ -313,6 +314,9 @@ const submit = async () => {
         setAccountNum(e.target.value.replace(/\D/g, ''))
       }
       placeholder="Account Number"
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
       className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700
                  bg-white dark:bg-slate-900
                  text-slate-900 dark:text-white
@@ -387,7 +391,9 @@ const submit = async () => {
         setCot(e.target.value.replace(/\D/g, '').slice(0, 4))
       }
       placeholder="Enter COT code"
-      type='number'
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
       className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white"
     />
 
@@ -427,11 +433,13 @@ const submit = async () => {
 
     <input
       value={tax}
-      type='number'
       onChange={(e) =>
         setTax(e.target.value.replace(/\D/g, '').slice(0, 4))
       }
       placeholder="Enter TAX code"
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
       className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white"
     />
 
@@ -471,11 +479,13 @@ const submit = async () => {
 
     <input
       value={imf}
-      type='number'
       onChange={(e) =>
         setImf(e.target.value.replace(/\D/g, '').slice(0, 4))
       }
       placeholder="Enter IMF code"
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
       className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] outline-none text-slate-900 dark:text-white"
     />
 
@@ -525,7 +535,9 @@ const submit = async () => {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value.replace(/[^\d.]/g, ''))}
                   placeholder="0.00"
-                  inputMode="decimal"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   className="w-full pl-10 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-3xl font-bold text-slate-900 dark:text-white placeholder:text-slate-400"
                 />
               </div>
@@ -560,7 +572,9 @@ const submit = async () => {
           setOtpError('');
         }}
         placeholder="••••"
+        type="text"
         inputMode="numeric"
+        pattern="[0-9]*"
         className="w-full px-4 py-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-center text-3xl tracking-[0.5em] font-bold text-slate-900 dark:text-white placeholder:text-slate-400"
       />
     </div>
