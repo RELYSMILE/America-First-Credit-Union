@@ -11,7 +11,7 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Send, History, User, CreditCard, Copy, Check, TrendingUp, Eye, EyeOff, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
+import { Send, History, User, CreditCard, Copy, Check, TrendingUp, Eye, EyeOff, ArrowUpRight, ArrowDownLeft, Globe2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
@@ -158,7 +158,8 @@ const unsub2 = onSnapshot(q2, (snapshot) => {
         {/* Quick actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { to: '/transfer', icon: Send, label: 'Send Money', color: 'from-[tomato] to-orange-500' },
+            { to: '/transfer?mode=internal', icon: Send, label: 'Trust Transfer', color: 'from-[tomato] to-orange-500'},
+            { to: '/transfer?mode=external', icon: Globe2, label: 'Wire Transfer', color: 'from-indigo-500 to-blue-600'},
             { to: '/transactions', icon: History, label: 'History', color: 'from-blue-500 to-blue-600' },
             { to: '/profile', icon: User, label: 'Profile', color: 'from-purple-500 to-purple-600' },
             { to: '/cards', icon: CreditCard, label: 'Cards', color: 'from-green-500 to-green-600' },

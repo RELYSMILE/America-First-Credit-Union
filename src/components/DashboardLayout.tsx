@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from "@/components/theme-provider";
-import { Shield, LayoutDashboard, Send, History, User, LogOut, Moon, Sun, Settings, Users, Menu, X, CreditCard } from 'lucide-react';
+import { Shield, LayoutDashboard, Send, History, User, LogOut, Moon, Sun, Settings, Users, Menu, X, CreditCard, Globe } from 'lucide-react';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/Config';
 import defaultAvatar from '../assets/avatar.png';
@@ -29,7 +29,8 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
       ]
     : [
         { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-        { to: '/transfer', icon: Send, label: 'Transfer' },
+        { to: '/transfer?mode=internal', icon: Send, label: 'Trust Transfer' },
+        { to: '/transfer?mode=external', icon: Globe, label: 'Wire Transfer' },
         { to: '/cards', icon: CreditCard, label: 'Cards' },
         { to: '/transactions', icon: History, label: 'Transactions' },
         { to: '/profile', icon: User, label: 'Profile' },

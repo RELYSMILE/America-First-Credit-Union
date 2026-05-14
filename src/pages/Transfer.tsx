@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { auth, db } from '../lib/Config';
 import {
@@ -17,7 +17,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Search, ArrowRight, Loader2, Check, AlertCircle, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
-type Step = 'account' | 'cot' | 'tax' | 'imf' | 'charges' | 'amount' | 'confirm' | 'pin' | 'success';
+type Step = 'account' | 'cot' | 'tax' | 'imf' | 'charges' | 'amount' | 'otp' | 'confirm' | 'pin' | 'success';
 
 const Transfer: React.FC = () => {
   const { user, refresh } = useAuth();
@@ -36,6 +36,16 @@ const Transfer: React.FC = () => {
   const [cot, setCot] = useState('');
   const [tax, setTax] = useState('');
   const [imf, setImf] = useState('');
+  const location = useLocation();
+  const mode = new URLSearchParams(location.search).get('mode') || 'internal';
+
+  const isExternal = mode === 'external';
+
+  const [externalName, setExternalName] = useState('');
+  const [externalBank, setExternalBank] = useState('');
+  const [transferError, setTransferError] = useState("");
+  const [otp, setOtp] = useState('');
+  const [otpError, setOtpError] = useState('');
 
 useEffect(() => {
   const delay = setTimeout(() => {
@@ -91,7 +101,7 @@ const handleAccountChange = async (value: string) => {
     const amt = Number(amount);
     if (isNaN(amt) || amt <= 0) { toast.error('Enter a valid amount'); return; }
     if (amt > Number(user?.balance)) { toast.error('Insufficient balance'); return; }
-    setStep('confirm');
+    setStep('otp');
   };
 
 const submit = async () => {
@@ -103,7 +113,7 @@ const submit = async () => {
     toast.error('Enter your 4-digit PIN');
     return;
   }
-
+  setTransferError("");
   setLoading(true);
 
   try {
@@ -115,7 +125,7 @@ const submit = async () => {
       .docs
       .find(d => d.data().account_number === accountNum);
 
-    if (!receiverSnap) throw new Error("Recipient not found");
+    if (!receiverSnap) throw new Error("Transfer cannot be completed at the moment. Please verify the details or contact customer support.");
 
     const receiverRef = doc(db, "nest_users", receiverSnap.id);
 
@@ -149,20 +159,40 @@ const submit = async () => {
       // Create transaction record
       const txRef = doc(collection(db, "nest_transactions"));
 
-      transaction.set(txRef, {
-          sender_id: user.uid,
-          receiver_id: receiverSnap.id,
-          sender_name: senderData.name,
-          receiver_name: receiverData.name,
-          sender_account: senderData.account_number,
-          receiver_account: receiverData.account_number,
-          receiver_bank: bankName || recipient?.bank_name,
-          amount: amountNum,
-          note: note || "",
-          status: "success",
-          participants: [user.uid, receiverSnap.id],
-          created_at: serverTimestamp()
-      });
+      const txData = {
+        sender_id: user.uid,
+        sender_name: senderData.name,
+        sender_account: senderData.account_number,
+
+        receiver_name: isExternal
+          ? externalName
+          : receiverData.name,
+
+        receiver_account: isExternal
+          ? accountNum
+          : receiverData.account_number,
+
+        receiver_bank: isExternal
+          ? externalBank
+          : (bankName || receiverData.bank_name),
+
+        amount: amountNum,
+        note: note || "",
+        status: "success",
+        transfer_type: isExternal ? "external" : "internal",
+        created_at: serverTimestamp(),
+      };
+
+      // Add these fields only for internal transfer
+      if (!isExternal && receiverSnap) {
+        txData.receiver_id = receiverSnap.id;
+        txData.participants = [
+          user.uid,
+          receiverSnap.id,
+        ];
+      }
+
+      transaction.set(txRef, txData);
     });
 
     await refresh();
@@ -170,7 +200,9 @@ const submit = async () => {
     setResult({ newBalance: user.balance - amountNum });
 
   } catch (e: any) {
-    toast.error(e.message || 'Transfer failed');
+    const message = e.message || "Transfer failed";
+    toast.error(message);
+  setTransferError(message);
   } finally {
     setLoading(false);
   }
@@ -210,71 +242,135 @@ const submit = async () => {
 
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
           <div className={user.frozen? 'opacity-50 pointer-events-none' : ''}>
-          {step === 'account' && (
-            <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-              <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">Recipient Account</h2>
-              <p className="text-sm text-slate-500 mb-6">Enter the 10-digit account number</p>
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  value={accountNum}
-                  onChange={(e) => handleAccountChange(e.target.value)}
-                  placeholder="0123456789"
-                  inputMode="numeric"
-                  className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none font-mono text-lg tracking-widest text-slate-900 dark:text-white placeholder:text-slate-400"
-                />
-              </div>
-              {/* BANK NAME INPUT */}
-              {found && (
-              <div className="mt-4">
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
-                  Bank Name
-                </label>
+        {step === 'account' && (
+  <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+    <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">
+      Recipient Account
+    </h2>
 
-                <input
-                  value={bankName}
-                  onChange={(e) => setBankName(e.target.value)}
-                  placeholder="Enter bank name (e.g. Bank of America)"
-                  className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none"
-                />
-              </div>
-              )}
-              {/* {searching && (
-              <p className="text-sm text-slate-500 mt-3">Searching account...</p>
-            )} */}
+    <p className="text-sm text-slate-500 mb-6">
+      {isExternal
+        ? 'Enter account details for wire transfer'
+        : 'Enter the recipient account details'}
+    </p>
+
+    {/* INTERNAL TRANSFER */}
+    {!isExternal && (
+      <>
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <input
+            value={accountNum}
+            onChange={(e) => handleAccountChange(e.target.value)}
+            placeholder="0123456789"
+            inputMode="numeric"
+            className="w-full pl-12 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none font-mono text-lg tracking-widest text-slate-900 dark:text-white placeholder:text-slate-400"
+          />
+        </div>
 
         {found && (
-          <div className="mt-4 p-4 rounded-xl bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0b24f3] to-[#0b24f3] flex items-center justify-center text-white font-bold">
-              {found.name?.charAt(0)}
+          <>
+            <div className="mt-4">
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">
+                Bank Name
+              </label>
+
+              <input
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+                placeholder="Enter bank name"
+                className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none"
+              />
             </div>
 
-            <div className="flex-1">
-              <p className="font-bold text-slate-900 dark:text-white">{found.name}</p>
-              <p className="text-xs text-slate-500">
-                Transer • {found.account_number}
-              </p>
-            </div>
+            <div className="mt-4 p-4 rounded-xl bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0b24f3] to-[#0b24f3] flex items-center justify-center text-white font-bold">
+                {found.name?.charAt(0)}
+              </div>
 
-            <Check className="w-5 h-5 text-green-600" />
-          </div>
+              <div className="flex-1">
+                <p className="font-bold text-slate-900 dark:text-white">
+                  {found.name}
+                </p>
+                <p className="text-xs text-slate-500">
+                  Transfer • {found.account_number}
+                </p>
+              </div>
+
+              <Check className="w-5 h-5 text-green-600" />
+            </div>
+          </>
         )}
+      </>
+    )}
 
-        {/* {accountNum.length === 10 && !found && !searching && (
-          <div className="mt-3 flex items-center gap-2 text-red-500 text-sm">
-            <AlertCircle className="w-4 h-4" />
-            Account not found
-          </div>
-        )} */}
-        <button
-            onClick={() => setStep('cot')}
-              disabled={(!found && !bankName)|| searching || user.frozen}
-              className="w-full mt-6 py-3.5 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30 disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              Continue <ArrowRight className="w-4 h-4" />
-            </button>
-            </div>
-          )}
+    {/* EXTERNAL TRANSFER */}
+    {isExternal && (
+  <div className="space-y-4">
+    <input
+      value={accountNum}
+      onChange={(e) =>
+        setAccountNum(e.target.value.replace(/\D/g, ''))
+      }
+      placeholder="Account Number"
+      className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700
+                 bg-white dark:bg-slate-900
+                 text-slate-900 dark:text-white
+                 placeholder:text-slate-400 dark:placeholder:text-slate-500
+                 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20
+                 outline-none"
+    />
+
+    <input
+      value={externalName}
+      onChange={(e) => setExternalName(e.target.value)}
+      placeholder="Account Name"
+      className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700
+                 bg-white dark:bg-slate-900
+                 text-slate-900 dark:text-white
+                 placeholder:text-slate-400 dark:placeholder:text-slate-500
+                 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20
+                 outline-none"
+    />
+
+    <input
+      value={externalBank}
+      onChange={(e) => setExternalBank(e.target.value)}
+      placeholder="Bank Name"
+      className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700
+                 bg-white dark:bg-slate-900
+                 text-slate-900 dark:text-white
+                 placeholder:text-slate-400 dark:placeholder:text-slate-500
+                 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20
+                 outline-none"
+    />
+  </div>
+)}
+
+    <button
+      onClick={() => {
+        if (isExternal) {
+          setRecipient({
+            name: externalName,
+            account_number: accountNum,
+            bank_name: externalBank,
+            account_type: 'Savings',
+          });
+        }
+
+        setStep('cot');
+      }}
+      disabled={
+        isExternal
+          ? !accountNum || !externalName || !externalBank
+          : (!found && !bankName) || searching || user.frozen
+      }
+      className="w-full mt-6 py-3.5 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30 disabled:opacity-50 flex items-center justify-center gap-2"
+    >
+      Continue <ArrowRight className="w-4 h-4" />
+    </button>
+  </div>
+)}
 
           {step === 'cot' && recipient && (
   <div className="animate-in fade-in slide-in-from-right-4 duration-300">
@@ -443,6 +539,78 @@ const submit = async () => {
             </div>
           )}
 
+          {step === 'otp' && (
+  <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+    
+    <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">
+      OTP Verification
+    </h2>
+    <p className="text-sm text-slate-500 mb-6">
+      Enter the 4-digit code sent to your device
+    </p>
+
+    <div className="relative">
+      <input
+        value={otp}
+        onChange={(e) => {
+          setOtp(e.target.value.replace(/\D/g, '').slice(0, 4));
+          setOtpError('');
+        }}
+        placeholder="••••"
+        inputMode="numeric"
+        className="w-full px-4 py-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-center text-3xl tracking-[0.5em] font-bold text-slate-900 dark:text-white placeholder:text-slate-400"
+      />
+    </div>
+
+    {otpError && (
+  <div className="mt-4 p-4 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+    
+    {/* Icon */}
+    <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center flex-shrink-0">
+      <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />
+    </div>
+
+    {/* Text */}
+    <div className="flex-1">
+      <p className="text-sm font-semibold text-red-700 dark:text-red-300">
+        Verification Failed
+      </p>
+      <p className="text-xs text-red-600 dark:text-red-400 mt-1 leading-relaxed">
+        {otpError}
+      </p>
+    </div>
+  </div>
+)}
+
+    <div className="flex gap-3 mt-6">
+      <button
+        onClick={() => setStep('amount')}
+        className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400"
+      >
+        Back
+      </button>
+
+      <button
+        onClick={() => {
+          const validOtps = ['0356', '9642', '5580', '2312', '9158'];
+
+          if (!validOtps.includes(otp)) {
+            setOtpError(
+              'Invalid OTP. Please try again or contact customer support.'
+            );
+            return;
+          }
+
+          setStep('confirm');
+        }}
+        className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold"
+      >
+        Continue
+      </button>
+    </div>
+  </div>
+)}
+
           {step === 'confirm' && recipient && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
               <h2 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">Confirm Transfer</h2>
@@ -466,12 +634,28 @@ const submit = async () => {
                 <input
                   type="password"
                   value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  onChange={(e) => {
+                    setPin(e.target.value.replace(/\D/g, "").slice(0, 4));
+                    setTransferError("");
+                  }}
                   placeholder="••••"
                   inputMode="numeric"
                   className="w-full px-4 py-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-center text-3xl tracking-[0.5em] font-bold text-slate-900 dark:text-white placeholder:text-slate-400"
                 />
               </div>
+              {transferError && (
+  <div className="mt-3 flex items-start gap-3 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3 animate-in fade-in slide-in-from-top-2 duration-300">
+    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center">
+      <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+    </div>
+
+    <div className="flex-1">
+      <p className="text-sm text-red-600 dark:text-red-400 mt-0.5">
+        {transferError}
+      </p>
+    </div>
+  </div>
+)}
               <div className="flex gap-3 mt-6">
                 <button onClick={() => setStep('amount')} className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400">Back</button>
                 <button onClick={submit} disabled={loading || pin.length !== 4 || user.frozen} className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30 disabled:opacity-50 flex items-center justify-center gap-2">
