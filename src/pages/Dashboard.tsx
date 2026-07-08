@@ -111,8 +111,7 @@ const unsub2 = onSnapshot(q2, (snapshot) => {
                   Account Frozen
                 </h3>
                 <p className="text-xs text-red-600 dark:text-red-300 mt-1">
-                  Your account has been temporarily restricted. You cannot perform transactions at the moment.
-                  Please contact customer support for assistance.
+                  Your account has been temporarily restricted. You cannot perform any transactions at the moment. Please contact customer support for assistance or reach us at support.trustbankplc@gmail.com
                 </p>
               </div>
             </div>

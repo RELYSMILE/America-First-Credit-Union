@@ -17,7 +17,8 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Search, ArrowRight, Loader2, Check, AlertCircle, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
-type Step = 'account' | 'cot' | 'tax' | 'imf' | 'charges' | 'amount' | 'otp' | 'confirm' | 'pin' | 'success';
+// type Step = 'account' | 'cot' | 'tax' | 'imf' | 'charges' | 'amount' | 'otp' | 'confirm' | 'pin' | 'success'; original steps without cot, tax, imf included
+type Step = 'account' | 'charges' | 'amount' | 'otp' | 'confirm' | 'pin' | 'success';
 
 const Transfer: React.FC = () => {
   const { user, refresh } = useAuth();
@@ -32,9 +33,9 @@ const Transfer: React.FC = () => {
   const [result, setResult] = useState<any>(null);
   const [searching, setSearching] = useState(false);
   const [found, setFound] = useState<any>(null);
-  const [cot, setCot] = useState('');
-  const [tax, setTax] = useState('');
-  const [imf, setImf] = useState('');
+  // const [cot, setCot] = useState('');
+  // const [tax, setTax] = useState('');
+  // const [imf, setImf] = useState('');
   const location = useLocation();
   const mode = new URLSearchParams(location.search).get('mode') || 'internal';
 
@@ -222,8 +223,8 @@ const submit = async () => {
                 Account Restricted
               </p>
               <p className="text-sm text-red-600 dark:text-red-300">
-                Your account is currently restricted. You cannot perform transfers at this time.
-                Please contact customer support.
+                Your account is currently restricted. You cannot perform any transactions at this time.
+                Please contact customer support or reach us at support.trustbankplc@gmail.com
               </p>
             </div>
           </div>
@@ -233,9 +234,13 @@ const submit = async () => {
 
         {/* Stepper */}
         <div className="flex items-center gap-2 mb-8">
-          {['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].map((s, i) => {
+          {/* {['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].map((s, i) => {
             const idx = ['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].indexOf(step);
-            const mine = ['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].indexOf(s);
+            const mine = ['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].indexOf(s); */}
+            {['account', 'amount', 'confirm', 'success'].map((s, i) => {
+              const steps = ['account', 'amount', 'confirm', 'success'];
+              const idx = steps.indexOf(step);
+              const mine = steps.indexOf(s);
             return <div key={s} className={`flex-1 h-1.5 rounded-full ${mine <= idx ? 'bg-[#0b24f3]' : 'bg-slate-200 dark:bg-slate-800'}`} />;
           })}
         </div>
@@ -360,7 +365,8 @@ const submit = async () => {
           });
         }
 
-        setStep('cot');
+        // setStep('cot');
+        setStep('amount');
       }}
       disabled={
         isExternal
@@ -374,7 +380,7 @@ const submit = async () => {
   </div>
 )}
 
-          {step === 'cot' && recipient && (
+          {/* {step === 'cot' && recipient && (
   <div className="animate-in fade-in slide-in-from-right-4 duration-300">
     <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">
       Enter COT Code
@@ -509,7 +515,7 @@ const submit = async () => {
       </button>
     </div>
   </div>
-)}
+)} */}
 
 
 
@@ -660,9 +666,9 @@ const submit = async () => {
                 <Row label="Account" value={recipient.account_number} />
                 <Row label="Account Type" value={recipient?.account_type} />
                 <Row label="Bank Name" value={recipient?.bank_name} />
-                <Row label="COT" value={cot} />
+                {/* <Row label="COT" value={cot} />
                 <Row label="TAX" value={tax} />
-                <Row label="IMF" value={imf} />
+                <Row label="IMF" value={imf} /> */}
                 {note && <Row label="Narration" value={note} />}
                 <Row label="Fee" value="$0.00" />
               </div>
