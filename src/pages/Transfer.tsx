@@ -212,7 +212,7 @@ const submit = async () => {
 };
 
 const stepperSteps = settings?.imf_enabled
-  ? ['account', 'imf', 'amount', 'otp', 'confirm', 'success']
+  ? ['account', 'amount', 'otp', 'imf', 'confirm', 'success']
   : ['account', 'amount', 'otp', 'confirm', 'success'];
 
   if (!user) return null;
@@ -378,7 +378,7 @@ const stepperSteps = settings?.imf_enabled
         }
 
         // setStep('cot');
-        setStep(settings?.imf_enabled ? 'imf' : 'amount');
+        setStep('amount');
       }}
       disabled={
         isExternal
@@ -574,7 +574,7 @@ const stepperSteps = settings?.imf_enabled
 
     <div className="flex gap-3 mt-6">
       <button
-        onClick={() => setStep("account")}
+        onClick={() => setStep("otp")}
         className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white"
       >
         Back
@@ -594,7 +594,7 @@ const stepperSteps = settings?.imf_enabled
               return;
             }
 
-            setStep("amount");
+            setStep("confirm");
           }, 2000);
         }}
         disabled={imfLoading}
@@ -663,7 +663,7 @@ const stepperSteps = settings?.imf_enabled
                 className="w-full mt-4 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
               />
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setStep(settings?.imf_enabled ? 'imf' : 'account')} className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400">Back</button>
+                <button onClick={() => setStep('account')} className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400">Back</button>
                 <button onClick={proceedAmount} className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30">Continue</button>
               </div>
             </div>
@@ -731,7 +731,7 @@ const stepperSteps = settings?.imf_enabled
         return;
       }
 
-      setStep('confirm');
+      setStep(settings?.imf_enabled ? 'imf' : 'confirm');
     }, 2000); // 2 seconds delay (premium feel)
   }}
   disabled={otpLoading}
