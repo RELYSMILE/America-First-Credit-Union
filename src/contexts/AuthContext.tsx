@@ -41,6 +41,7 @@ export interface AppSettings {
   hero_title: string;
   hero_subtitle: string;
   avatar: string;
+  imf_enabled: boolean;
 }
 
 const AuthContext = createContext<AuthCtx | undefined>(undefined);
@@ -74,14 +75,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // 🔄 Refresh user
+  // Refresh user
   const refresh = useCallback(async () => {
     if (session?.uid) {
       await loadProfile(session.uid);
     }
   }, [session, loadProfile]);
 
-  // 🔐 Auth state listener (replaces Supabase session)
+  // Auth state listener (replaces Supabase session)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setSession(fbUser);
@@ -98,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, [loadProfile]);
 
-  // ⚡ Realtime user updates (balance, etc.)
+  // Realtime user updates (balance, etc.)
   useEffect(() => {
     if (!session?.uid) return;
 
@@ -113,12 +114,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, [session?.uid]);
 
-  // 🔑 Sign in
+  // Sign in
   const signIn = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  // 🚪 Sign out
+  // Sign out
   const signOut = async () => {
     await firebaseSignOut(auth);
     setUser(null);

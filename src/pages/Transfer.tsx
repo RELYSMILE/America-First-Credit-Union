@@ -18,10 +18,10 @@ import { Search, ArrowRight, Loader2, Check, AlertCircle, Shield } from 'lucide-
 import { toast } from 'sonner';
 
 // type Step = 'account' | 'cot' | 'tax' | 'imf' | 'charges' | 'amount' | 'otp' | 'confirm' | 'pin' | 'success'; original steps without cot, tax, imf included
-type Step = 'account' | 'charges' | 'amount' | 'otp' | 'confirm' | 'pin' | 'success';
+type Step = 'account' | 'imf' | 'charges' | 'amount' | 'otp' | 'confirm' | 'pin' | 'success';
 
 const Transfer: React.FC = () => {
-  const { user, refresh } = useAuth();
+  const { user, refresh, settings } = useAuth();
   const nav = useNavigate();
   const [step, setStep] = useState<Step>('account');
   const [accountNum, setAccountNum] = useState('');
@@ -35,7 +35,7 @@ const Transfer: React.FC = () => {
   const [found, setFound] = useState<any>(null);
   // const [cot, setCot] = useState('');
   // const [tax, setTax] = useState('');
-  // const [imf, setImf] = useState('');
+  const [imf, setImf] = useState('');
   const location = useLocation();
   const mode = new URLSearchParams(location.search).get('mode') || 'internal';
 
@@ -47,6 +47,8 @@ const Transfer: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [otpError, setOtpError] = useState('');
   const [otpLoading, setOtpLoading] = useState(false);
+  const [imfLoading, setImfLoading] = useState(false);
+  const [imfError, setImfError] = useState("");
 
 useEffect(() => {
   const delay = setTimeout(() => {
@@ -209,6 +211,10 @@ const submit = async () => {
   }
 };
 
+const stepperSteps = settings?.imf_enabled
+  ? ['account', 'imf', 'amount', 'otp', 'confirm', 'success']
+  : ['account', 'amount', 'otp', 'confirm', 'success'];
+
   if (!user) return null;
 
   return (
@@ -234,16 +240,22 @@ const submit = async () => {
 
         {/* Stepper */}
         <div className="flex items-center gap-2 mb-8">
-          {/* {['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].map((s, i) => {
-            const idx = ['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].indexOf(step);
-            const mine = ['account', 'cot', 'tax', 'imf', 'charges', 'amount', 'confirm', 'success'].indexOf(s); */}
-            {['account', 'amount', 'confirm', 'success'].map((s, i) => {
-              const steps = ['account', 'amount', 'confirm', 'success'];
-              const idx = steps.indexOf(step);
-              const mine = steps.indexOf(s);
-            return <div key={s} className={`flex-1 h-1.5 rounded-full ${mine <= idx ? 'bg-[#0b24f3]' : 'bg-slate-200 dark:bg-slate-800'}`} />;
-          })}
-        </div>
+  {stepperSteps.map((s) => {
+    const currentIndex = stepperSteps.indexOf(step);
+    const stepIndex = stepperSteps.indexOf(s);
+
+    return (
+      <div
+        key={s}
+        className={`flex-1 h-1.5 rounded-full ${
+          stepIndex <= currentIndex
+            ? 'bg-[#0b24f3]'
+            : 'bg-slate-200 dark:bg-slate-800'
+        }`}
+      />
+    );
+  })}
+</div>
 
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
           <div className={user.frozen? 'opacity-50 pointer-events-none' : ''}>
@@ -366,7 +378,7 @@ const submit = async () => {
         }
 
         // setStep('cot');
-        setStep('amount');
+        setStep(settings?.imf_enabled ? 'imf' : 'amount');
       }}
       disabled={
         isExternal
@@ -518,6 +530,105 @@ const submit = async () => {
 )} */}
 
 
+{step === 'imf' && recipient && (
+  <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+    <h2 className="text-xl font-bold mb-1 text-slate-900 dark:text-white">
+      IMF Verification
+    </h2>
+
+    <p className="text-sm text-slate-500 mb-6">
+      Enter your IMF authorization code to continue with this transfer.
+    </p>
+
+    <input
+      value={imf}
+      onChange={(e) => {
+        setImf(e.target.value.replace(/\D/g, "").slice(0, 4));
+        setImfError("");
+      }}
+      placeholder="Enter IMF code"
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      className="w-full px-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-slate-900 dark:text-white"
+    />
+
+    {imfError && (
+        <div className="mt-4 p-4 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+
+          <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center flex-shrink-0">
+            <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />
+          </div>
+
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-red-700 dark:text-red-300">
+              IMF Verification Failed
+            </p>
+
+            <p className="text-xs text-red-600 dark:text-red-400 mt-1 leading-relaxed">
+              {imfError}
+            </p>
+          </div>
+        </div>
+      )}
+
+    <div className="flex gap-3 mt-6">
+      <button
+        onClick={() => setStep("account")}
+        className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white"
+      >
+        Back
+      </button>
+
+      <button
+        onClick={() => {
+          setImfLoading(true);
+
+          setTimeout(() => {
+            setImfLoading(false);
+
+            if (imf !== "4087") {
+              setImfError(
+                "The IMF authorization code is invalid or has expired. Please verify the code or contact customer support."
+              );
+              return;
+            }
+
+            setStep("amount");
+          }, 2000);
+        }}
+        disabled={imfLoading}
+        className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+      >
+        {imfLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Verifying...
+            </>
+          ) : (
+            "Continue"
+          )}
+      </button>
+    </div>
+     {imfLoading && (
+        <div className="mt-4 p-4 rounded-xl border border-blue-200 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/30 flex items-center gap-3 animate-in fade-in">
+
+          <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+
+          <div>
+            <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+              Verifying IMF Authorization
+            </p>
+
+            <p className="text-xs text-blue-600 dark:text-blue-400">
+              Please wait while we validate your IMF authorization code...
+            </p>
+          </div>
+        </div>
+      )}
+  </div>
+)}
+
 
           {step === 'amount' && recipient && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
@@ -552,7 +663,7 @@ const submit = async () => {
                 className="w-full mt-4 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
               />
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setStep('account')} className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400">Back</button>
+                <button onClick={() => setStep(settings?.imf_enabled ? 'imf' : 'account')} className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400">Back</button>
                 <button onClick={proceedAmount} className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30">Continue</button>
               </div>
             </div>
@@ -725,7 +836,7 @@ const submit = async () => {
               </div>
               <div className="flex gap-3 mt-8">
                 <button onClick={() => nav('/dashboard')} className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-900 dark:text-white placeholder:text-slate-400">Dashboard</button>
-                <button onClick={() => { setStep('account'); setAccountNum(''); setRecipient(null); setAmount(''); setNote(''); setPin(''); setResult(null); }} className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold">Send Another</button>
+                <button onClick={() => { setStep('account'); setAccountNum(''); setRecipient(null); setAmount(''); setNote(''); setPin(''); setImf(''); setResult(null); }} className="flex-1 py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold">Send Another</button>
               </div>
             </div>
           )}

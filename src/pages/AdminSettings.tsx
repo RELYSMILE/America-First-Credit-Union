@@ -13,7 +13,7 @@ import { Loader2, Save } from 'lucide-react';
 
 const AdminSettings: React.FC = () => {
   const { user } = useAuth();
-  const [settings, setSettings] = useState({ app_name: '', hero_title: '', hero_subtitle: '', avatar: '', });
+  const [settings, setSettings] = useState({ app_name: '', hero_title: '', hero_subtitle: '', imf_enabled: false, avatar: '', });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -32,6 +32,7 @@ const AdminSettings: React.FC = () => {
             hero_title: data.hero_title || '',
             hero_subtitle: data.hero_subtitle || '',
             avatar: data.avatar || '',
+            imf_enabled: data.imf_enabled ?? false,
           });
         }
       } catch (err) {
@@ -106,7 +107,7 @@ const AdminSettings: React.FC = () => {
             <textarea value={settings.hero_subtitle} onChange={(e) => setSettings({ ...settings, hero_subtitle: e.target.value })} rows={3}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:border-[#0b24f3] focus:ring-2 focus:ring-[#0b24f3]/20 outline-none text-slate-900 dark:text-white placeholder:text-slate-400" />
           </div>
-                        <div>
+              <div>
                 <label style={{ marginTop: '0.5rem' }} className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2">
                   App logo
                 </label>
@@ -134,6 +135,42 @@ const AdminSettings: React.FC = () => {
                     />
                   )}
                 </div>
+              </div>
+
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Transfer Page Settings</h1>
+              <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+                <div>
+                  <h3 className="font-semibold text-slate-900 dark:text-white">
+                    IMF Verification
+                  </h3>
+
+                  <p className="text-sm text-slate-500">
+                    Require users to complete IMF verification before transferring funds.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSettings({
+                      ...settings,
+                      imf_enabled: !settings.imf_enabled,
+                    })
+                  }
+                  className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                    settings.imf_enabled
+                      ? "bg-[#0b24f3]"
+                      : "bg-slate-300 dark:bg-slate-700"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                      settings.imf_enabled
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
           <button onClick={save} disabled={loading} className="w-full py-3 rounded-xl bg-[#0b24f3] hover:bg-[#0b24f3]/80 text-white font-semibold shadow-lg shadow-[#0b24f3]/30 flex items-center justify-center gap-2 disabled:opacity-50">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Settings
